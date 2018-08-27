@@ -87,7 +87,7 @@ typedef NS_ENUM(NSInteger, HWDBGetDateOption) {
         } break;
             
         case KSDBGetDateOptionLastDownloadingModel: {
-            NSArray *list = [KSDownloadModel objectsWhere:@"WHERE state = ? order by lastStateTime desc limit 0,1" arguments:@[[NSNumber numberWithInteger:KSDownloadStateWaiting]]];
+            NSArray *list = [KSDownloadModel objectsWhere:@"WHERE state = ? order by lastStateTime desc limit 0,1" arguments:@[[NSNumber numberWithInteger:KSDownloadStateDownloading]]];
             model = list.count ? list.firstObject : nil;
         } break;
             

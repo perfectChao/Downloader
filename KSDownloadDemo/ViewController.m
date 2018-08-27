@@ -62,13 +62,15 @@
 - (void)getCacheData
 {
     // 获取已缓存数据
-    [[KSDownloader sharedDownloader] updateDownloadingTaskState];
     NSArray *cacheData = [[KSDownloadCache sharedCache] getAllCacheData];
     
     // 这里是把本地缓存数据更新到网络请求的数据中，实际开发还是尽可能避免这样在两个地方取数据再整合
     for (int i = 0; i < self.dataSource.count; i++) {
         KSDownloadModel *model = self.dataSource[i];
         for (KSDownloadModel *downloadModel in cacheData) {
+            if (downloadModel.state == KSDownloadStateDownloading) {
+                downloadModel.state = KSDownloadStateWaiting; // 杀死客户端状态无法改变bug
+            }
             if ([model.URLString isEqualToString:downloadModel.URLString]) {
                 self.dataSource[i] = downloadModel;
                 break;
@@ -79,10 +81,37 @@
     [_tableView reloadData];
 }
 
+- (void)action0 {
+    for (int i = 0; i < self.dataSource.count; i++) {
+        KSDownloadModel *model = self.dataSource[i];
+        if (model.state != KSDownloadStateDownloading) {
+            [[KSDownloader sharedDownloader] startDownloadTask:model];
+        }
+    }
+}
+
+- (void)action1 {
+    [[KSDownloader sharedDownloader] suspendAllDownloadTask];
+}
+
 - (void)creatControl
 {
+    UIButton *btn0 = [UIButton buttonWithType:UIButtonTypeCustom];
+    btn0.frame = CGRectMake(0, 0, 80, 40);
+    btn0.backgroundColor = [UIColor brownColor];
+    [btn0 setTitle:@"全部开始" forState:UIControlStateNormal];
+    [btn0 addTarget:self action:@selector(action0) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:btn0];
+    
+    UIButton *btn1 = [UIButton buttonWithType:UIButtonTypeCustom];
+    btn1.frame = CGRectMake(200, 0, 80, 40);
+    btn1.backgroundColor = [UIColor brownColor];
+    [btn1 setTitle:@"全部暂停" forState:UIControlStateNormal];
+    [btn1 addTarget:self action:@selector(action1) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:btn1];
+    
     // tableView
-    UITableView *tableView = [[UITableView alloc] initWithFrame:UIScreen.mainScreen.bounds];
+    UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 50, UIScreen.mainScreen.bounds.size.width, UIScreen.mainScreen.bounds.size.height - 50)];
     tableView.showsVerticalScrollIndicator = NO;
     tableView.dataSource = self;
     tableView.delegate = self;
@@ -125,7 +154,7 @@
 - (void)downLoadProgress:(NSNotification *)notification
 {
     KSDownloadModel *downloadModel = notification.object;
-    
+
     [self.dataSource enumerateObjectsUsingBlock:^(KSDownloadModel *model, NSUInteger idx, BOOL * _Nonnull stop) {
         if ([model.URLString isEqualToString:downloadModel.URLString]) {
             // 主线程更新cell进度
@@ -133,7 +162,7 @@
                 HWHomeCell *cell = [_tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:idx inSection:0]];
                 [cell updateViewWithModel:downloadModel];
             });
-            
+
             *stop = YES;
         }
     }];
@@ -143,7 +172,7 @@
 - (void)downLoadStateChange:(NSNotification *)notification
 {
     KSDownloadModel *downloadModel = notification.object;
-    
+
     [self.dataSource enumerateObjectsUsingBlock:^(KSDownloadModel *model, NSUInteger idx, BOOL * _Nonnull stop) {
         if ([model.URLString isEqualToString:downloadModel.URLString]) {
             // 更新数据源

@@ -86,13 +86,6 @@ static NSString *const KSBackgroundSessionConfigrationIdentifier = @"com.kaishu.
 
 #pragma mark - Download Action
 
-- (void)startAllDownloadTask {
-    NSArray *unDownloadList = [[KSDownloadCache sharedCache] getAllUnDownloadedData];
-    for (KSDownloadModel *m in unDownloadList) {
-        [self startDownloadTask:m];
-    }
-}
-
 - (void)startDownloadTask:(KSDownloadModel *)model {
     KSDownloadModel *downloadModel = [[KSDownloadCache sharedCache] getModelWithURLString:model.URLString];
     if (!downloadModel) {
@@ -101,6 +94,7 @@ static NSString *const KSBackgroundSessionConfigrationIdentifier = @"com.kaishu.
     }
     
     downloadModel.state = KSDownloadStateWaiting;
+    
     [[KSDownloadCache sharedCache] updateWithModel:downloadModel option:KSCacheUpdateOptionState | KSCacheUpdateOptionLastStateTime];
     
     if (_currentCount < _maxConcurrentDownloadCount && [self networkingAllowsDownloadTask]) {
@@ -131,7 +125,7 @@ static NSString *const KSBackgroundSessionConfigrationIdentifier = @"com.kaishu.
 }
 
 - (void)suspendDownloadTask:(KSDownloadModel *)model {
-    KSDownloadModel *downloadModel = [[KSDownloadCache sharedCache] getModelWithURLString:model.URLString];
+    KSDownloadModel *downloadModel = [[KSDownloadCache sharedCache] getModelWithURLString:model.URLString]; // 获取实时数据
     [self cancelTaskWithModel:downloadModel delete:NO];
     downloadModel.state = KSDownloadStatePaused; // update suspend state
     [[KSDownloadCache sharedCache] updateWithModel:downloadModel option:KSCacheUpdateOptionState];
@@ -171,6 +165,18 @@ static NSString *const KSBackgroundSessionConfigrationIdentifier = @"com.kaishu.
 }
 
 - (void)pauseDownloadingTaskWithAll:(BOOL)all {
+    NSArray *downloadingData = [[KSDownloadCache sharedCache] getAllUnDownloadedData];
+    NSInteger count = all ? downloadingData.count : downloadingData.count - _maxConcurrentDownloadCount;
+    for (NSInteger i = 0; i < count; i++) {
+        KSDownloadModel *model = downloadingData[i];
+        [self cancelTaskWithModel:model delete:NO];
+        
+        model.state = KSDownloadStatePaused;
+        [[KSDownloadCache sharedCache] updateWithModel:model option:KSCacheUpdateOptionState];
+    }
+}
+
+- (void)waitingDownloadingTaskWithAll:(BOOL)all {
     NSArray *downloadingData = [[KSDownloadCache sharedCache] getAllDownloadingData];
     NSInteger count = all ? downloadingData.count : downloadingData.count - _maxConcurrentDownloadCount;
     for (NSInteger i = 0; i < count; i++) {
@@ -269,7 +275,7 @@ static NSString *const KSBackgroundSessionConfigrationIdentifier = @"com.kaishu.
         [self startDownloadWaitingTask];
     } else {
         // 当网络不可到达时, 将所有任务切换到等待状态, 待网络恢复后继续下载
-        [self pauseDownloadingTaskWithAll:YES];
+        [self waitingDownloadingTaskWithAll:YES];
     }
 }
 
