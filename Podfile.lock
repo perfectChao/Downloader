@@ -1,0 +1,23 @@
+PODS:
+  - FMDB (2.6.2):
+    - FMDB/standard (= 2.6.2)
+  - FMDB/standard (2.6.2)
+  - GYDataCenter (0.1.0):
+    - FMDB
+
+DEPENDENCIES:
+  - FMDB (~> 2.6.2)
+  - GYDataCenter (= 0.1.0)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - FMDB
+    - GYDataCenter
+
+SPEC CHECKSUMS:
+  FMDB: 854a0341b4726e53276f2a8996f06f1b80f9259a
+  GYDataCenter: 0047543858b445b410c934096e1422dd5316d7a2
+
+PODFILE CHECKSUM: dd80121c410d48527fab4bc821565fb6e9c2d613
+
+COCOAPODS: 1.5.3
