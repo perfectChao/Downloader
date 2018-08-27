@@ -105,19 +105,19 @@ typedef NS_ENUM(NSInteger, HWDBGetDateOption) {
             break;
             
         case KSDBGetDateOptionAllDownloadingData:
-            array = [KSDownloadModel objectsWhere:@"WHERE WHERE state = ? order by lastStateTime desc" arguments:@[[NSNumber numberWithInteger:KSDownloadStateDownloading]]];
+            array = [KSDownloadModel objectsWhere:@"WHERE state = ? order by lastStateTime desc" arguments:@[[NSNumber numberWithInteger:KSDownloadStateDownloading]]];
             break;
             
         case KSDBGetDateOptionAllDownloadedData:
-            array = [KSDownloadModel objectsWhere:@"WHERE WHERE state = ?" arguments:@[[NSNumber numberWithInteger:KSDownloadStateFinish]]];
+            array = [KSDownloadModel objectsWhere:@"WHERE state = ?" arguments:@[[NSNumber numberWithInteger:KSDownloadStateFinish]]];
             break;
             
         case KSDBGetDateOptionAllUnDownloadedData:
-            array = [KSDownloadModel objectsWhere:@"WHERE WHERE state != ?" arguments:@[[NSNumber numberWithInteger:KSDownloadStateFinish]]];
+            array = [KSDownloadModel objectsWhere:@"WHERE state != ?" arguments:@[[NSNumber numberWithInteger:KSDownloadStateFinish]]];
             break;
             
         case KSDBGetDateOptionAllWaitingData:
-            array = [KSDownloadModel objectsWhere:@"WHERE WHERE state = ?" arguments:@[[NSNumber numberWithInteger:KSDownloadStateWaiting]]];
+            array = [KSDownloadModel objectsWhere:@"WHERE state = ?" arguments:@[[NSNumber numberWithInteger:KSDownloadStateWaiting]]];
             break;
             
         default:
