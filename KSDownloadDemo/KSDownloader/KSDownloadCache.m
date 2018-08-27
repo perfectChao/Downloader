@@ -151,14 +151,15 @@ typedef NS_ENUM(NSInteger, HWDBGetDateOption) {
     
     if (option & KSCacheUpdateOptionAllParam) {
         [self postStateChangeNotificationWithModel:model];
-        NSDictionary *dict = @{
-                               @"resumeData" : model.resumeData,
+        
+        NSMutableDictionary *dict = @{
                                @"tmpFileSize" : @(model.tmpFileSize),
                                @"totalFileSize" : @(model.totalFileSize),
                                @"progress" : @(model.progress),
                                @"state" : @(model.state),
                                @"lastStateTime" : @([KSDownloaderTool getTimeStampWithDate:[NSDate date]])
-                               };
+                               }.mutableCopy;
+        if (!model.resumeData) [dict setObject:model.resumeData forKey:@"resumeData"];
         [KSDownloadModel updateObjectsSet:dict Where:@"WHERE URLString = ?" arguments:@[model.URLString]];
     }
 }

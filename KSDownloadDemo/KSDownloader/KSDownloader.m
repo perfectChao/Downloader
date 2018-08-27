@@ -7,15 +7,15 @@
 //
 
 #import "KSDownloader.h"
+
 #import <UIKit/UIKit.h>
+#import "AppDelegate.h"
 
 #import "KSDownloadModel.h"
 #import "KSDownloadCache.h"
 #import "KSDownloaderTool.h"
 #import "NSURLSession+CorrectedResumeData.h"
 #import "HWNetworkReachabilityManager.h"
-
-#import "AppDelegate.h"
 
 NSString *const KSDownloadProgressNotification = @"KSDownloadProgressNotification";
 NSString *const KSNetworkingReachabilityDidChangeNotification = @"KSNetworkingReachabilityDidChangeNotification";
@@ -87,7 +87,7 @@ static NSString *const KSBackgroundSessionConfigrationIdentifier = @"com.kaishu.
 #pragma mark - Download Action
 
 - (void)startDownloadTasks:(NSArray<KSDownloadModel *> *)list {
-    NSArray *arr = [list copy];
+    NSArray *arr = [NSArray arrayWithArray:list];
     for (KSDownloadModel *model in arr) {
         if (model.state != KSDownloadStateDownloading && model.state != KSDownloadStateFinish) [self startDownloadTask:model];
     }
@@ -101,7 +101,6 @@ static NSString *const KSBackgroundSessionConfigrationIdentifier = @"com.kaishu.
     }
     
     downloadModel.state = KSDownloadStateWaiting;
-    
     [[KSDownloadCache sharedCache] updateWithModel:downloadModel option:KSCacheUpdateOptionState | KSCacheUpdateOptionLastStateTime];
     
     if (_currentCount < _maxConcurrentDownloadCount && [self networkingAllowsDownloadTask]) {
