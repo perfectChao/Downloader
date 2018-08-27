@@ -87,6 +87,8 @@ static NSString *const KSBackgroundSessionConfigrationIdentifier = @"com.kaishu.
 #pragma mark - Download Action
 
 - (void)startDownloadTasks:(NSArray<KSDownloadModel *> *)list {
+    if (list == nil || list.count == 0) return;
+    
     NSArray *arr = [NSArray arrayWithArray:list];
     for (KSDownloadModel *model in arr) {
         if (model.state != KSDownloadStateDownloading && model.state != KSDownloadStateFinish) [self startDownloadTask:model];
@@ -94,6 +96,8 @@ static NSString *const KSBackgroundSessionConfigrationIdentifier = @"com.kaishu.
 }
 
 - (void)startDownloadTask:(KSDownloadModel *)model {
+    if (model == nil) return;
+    
     KSDownloadModel *downloadModel = [[KSDownloadCache sharedCache] getModelWithURLString:model.URLString];
     if (!downloadModel) {
         downloadModel = model;
@@ -131,6 +135,8 @@ static NSString *const KSBackgroundSessionConfigrationIdentifier = @"com.kaishu.
 }
 
 - (void)suspendDownloadTask:(KSDownloadModel *)model {
+    if (model == nil) return;
+    
     KSDownloadModel *downloadModel = [[KSDownloadCache sharedCache] getModelWithURLString:model.URLString]; // 获取实时数据
     [self cancelTaskWithModel:downloadModel delete:NO];
     downloadModel.state = KSDownloadStatePaused; // update suspend state
@@ -138,6 +144,8 @@ static NSString *const KSBackgroundSessionConfigrationIdentifier = @"com.kaishu.
 }
 
 - (void)deleteTaskAndCache:(KSDownloadModel *)model {
+    if (model == nil) return;
+    
     [self cancelTaskWithModel:model delete:YES];
     
     dispatch_async(dispatch_get_global_queue(0, 0), ^{

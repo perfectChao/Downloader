@@ -44,13 +44,13 @@ extern NSString *const KSNetworkingReachabilityDidChangeNotification;
  开始下载
  暂停后,继续下载
  */
-- (void)startDownloadTask:(KSDownloadModel *)model;
+- (void)startDownloadTask:(nullable KSDownloadModel *)model;
 
 /**
  批量开启下载任务
  正在下载中, 已经下载完成的不会重新开启下载
  */
-- (void)startDownloadTasks:(NSArray <KSDownloadModel *> *)list;
+- (void)startDownloadTasks:(nullable NSArray <KSDownloadModel *> *)list;
 
 /**
  暂停所有下载
