@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "KSDownloader.h"
+#import "HWNetworkReachabilityManager.h"
 
 @interface AppDelegate ()
 
@@ -18,6 +19,8 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+    [[HWNetworkReachabilityManager shareManager] monitorNetworkStatus];
     return YES;
 }
 

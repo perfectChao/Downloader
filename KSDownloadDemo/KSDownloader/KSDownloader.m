@@ -286,7 +286,10 @@ static NSString *const KSBackgroundSessionConfigrationIdentifier = @"com.kaishu.
 }
 
 - (BOOL)networkingAllowsDownloadTask {
-    // TODO: 添加网络判断是否可达
+    AFNetworkReachabilityStatus status = [[HWNetworkReachabilityManager shareManager] networkReachabilityStatus];
+    if (status == AFNetworkReachabilityStatusNotReachable) {
+        return NO;
+    }
     return YES;
 }
 

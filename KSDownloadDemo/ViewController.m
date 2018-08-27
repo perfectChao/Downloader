@@ -87,6 +87,7 @@
 
 - (void)action1 {
     [[KSDownloader sharedDownloader] suspendAllDownloadTask];
+    
 }
 
 - (void)creatControl
