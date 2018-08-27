@@ -7,15 +7,14 @@
 //
 
 #import "KSDownloader.h"
-
-#import <UIKit/UIKit.h>
-#import "AppDelegate.h"
-
 #import "KSDownloadModel.h"
 #import "KSDownloadCache.h"
 #import "KSDownloaderTool.h"
+
 #import "NSURLSession+CorrectedResumeData.h"
 #import "HWNetworkReachabilityManager.h"
+
+#import "AppDelegate.h"
 
 NSString *const KSDownloadProgressNotification = @"KSDownloadProgressNotification";
 NSString *const KSNetworkingReachabilityDidChangeNotification = @"KSNetworkingReachabilityDidChangeNotification";
