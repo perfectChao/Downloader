@@ -46,6 +46,12 @@ extern NSString *const KSNetworkingReachabilityDidChangeNotification;
 - (void)startDownloadTask:(KSDownloadModel *)model;
 
 /**
+ 批量开启下载任务
+ 正在下载中, 已经下载完成的不会重新开启下载
+ */
+- (void)startDownloadTasks:(NSArray <KSDownloadModel *> *)list;
+
+/**
  暂停所有下载
  */
 - (void)suspendAllDownloadTask;

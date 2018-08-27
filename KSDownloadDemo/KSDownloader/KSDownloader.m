@@ -86,6 +86,13 @@ static NSString *const KSBackgroundSessionConfigrationIdentifier = @"com.kaishu.
 
 #pragma mark - Download Action
 
+- (void)startDownloadTasks:(NSArray<KSDownloadModel *> *)list {
+    NSArray *arr = [list copy];
+    for (KSDownloadModel *model in arr) {
+        if (model.state != KSDownloadStateDownloading && model.state != KSDownloadStateFinish) [self startDownloadTask:model];
+    }
+}
+
 - (void)startDownloadTask:(KSDownloadModel *)model {
     KSDownloadModel *downloadModel = [[KSDownloadCache sharedCache] getModelWithURLString:model.URLString];
     if (!downloadModel) {

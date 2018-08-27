@@ -82,12 +82,7 @@
 }
 
 - (void)action0 {
-    for (int i = 0; i < self.dataSource.count; i++) {
-        KSDownloadModel *model = self.dataSource[i];
-        if (model.state != KSDownloadStateDownloading) {
-            [[KSDownloader sharedDownloader] startDownloadTask:model];
-        }
-    }
+    [[KSDownloader sharedDownloader] startDownloadTasks:self.dataSource];
 }
 
 - (void)action1 {
