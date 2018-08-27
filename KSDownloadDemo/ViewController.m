@@ -62,6 +62,7 @@
 - (void)getCacheData
 {
     // 获取已缓存数据
+    [[KSDownloader sharedDownloader] updateDownloadingTaskState];
     NSArray *cacheData = [[KSDownloadCache sharedCache] getAllCacheData];
     
     // 这里是把本地缓存数据更新到网络请求的数据中，实际开发还是尽可能避免这样在两个地方取数据再整合

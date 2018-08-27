@@ -133,8 +133,8 @@ static NSString *const KSBackgroundSessionConfigrationIdentifier = @"com.kaishu.
 - (void)suspendDownloadTask:(KSDownloadModel *)model {
     KSDownloadModel *downloadModel = [[KSDownloadCache sharedCache] getModelWithURLString:model.URLString];
     [self cancelTaskWithModel:downloadModel delete:NO];
-    model.state = KSDownloadStatePaused; // update suspend state
-    [[KSDownloadCache sharedCache] updateWithModel:model option:KSCacheUpdateOptionState];
+    downloadModel.state = KSDownloadStatePaused; // update suspend state
+    [[KSDownloadCache sharedCache] updateWithModel:downloadModel option:KSCacheUpdateOptionState];
 }
 
 - (void)deleteTaskAndCache:(KSDownloadModel *)model {

@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <GYModelObject.h>
+#import <GYDataContext.h>
 #import <UIKit/UIKit.h>
 
 typedef NS_ENUM(NSInteger, KSDownloadState) {
