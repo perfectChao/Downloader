@@ -12,7 +12,7 @@
 /// 状态变更通知
 extern NSString *const KSDownloadModelStateChangeNotification;
 
-// 更新策略
+/** 缓存更新策略*/
 typedef NS_OPTIONS(NSUInteger, KSCacheUpdateOption) {
     KSCacheUpdateOptionState         = 1 << 0,  ///< 更新状态
     KSCacheUpdateOptionLastStateTime = 1 << 1,  ///< 更新状态最后改变的时间

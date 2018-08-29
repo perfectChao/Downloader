@@ -13,15 +13,15 @@
 
 NSString *const KSDownloadModelStateChangeNotification = @"KSDownloadModelStateChangeNotification";
 
-typedef NS_ENUM(NSInteger, HWDBGetDateOption) {
-    KSDBGetDateOptionAllCacheData = 0,      // 所有缓存数据
-    KSDBGetDateOptionAllDownloadingData,    // 所有正在下载的数据
-    KSDBGetDateOptionAllDownloadedData,     // 所有下载完成的数据
-    KSDBGetDateOptionAllUnDownloadedData,   // 所有未下载完成的数据
-    KSDBGetDateOptionAllWaitingData,        // 所有等待下载的数据
-    KSDBGetDateOptionModelWithUrl,          // 通过url获取单条数据
-    KSDBGetDateOptionWaitingModel,          // 第一条等待的数据
-    KSDBGetDateOptionLastDownloadingModel,  // 最后一条正在下载的数据
+typedef NS_ENUM(NSInteger, KSDBGetDataOption) {
+    KSDBGetDataOptionAllCacheData = 0,      // 所有缓存数据
+    KSDBGetDataOptionAllDownloadingData,    // 所有正在下载的数据
+    KSDBGetDataOptionAllDownloadedData,     // 所有下载完成的数据
+    KSDBGetDataOptionAllUnDownloadedData,   // 所有未下载完成的数据
+    KSDBGetDataOptionAllWaitingData,        // 所有等待下载的数据
+    KSDBGetDataOptionModelWithUrl,          // 通过url获取单条数据
+    KSDBGetDataOptionWaitingModel,          // 第一条等待的数据
+    KSDBGetDataOptionLastDownloadingModel,  // 最后一条正在下载的数据
 };
 
 @implementation KSDownloadCache
@@ -38,55 +38,56 @@ typedef NS_ENUM(NSInteger, HWDBGetDateOption) {
 #pragma mark - Action
 
 - (void)insertModel:(KSDownloadModel *)model {
+    if (model == nil) return;
     [model save];
 }
 
 - (KSDownloadModel *)getModelWithURLString:(NSString *)URLString {
-    return [self getModelWithOption:KSDBGetDateOptionModelWithUrl url:URLString];
+    return [self getModelWithOption:KSDBGetDataOptionModelWithUrl url:URLString];
 }
 
 - (KSDownloadModel *)getWaitingModel {
-    return [self getModelWithOption:KSDBGetDateOptionWaitingModel url:nil];
+    return [self getModelWithOption:KSDBGetDataOptionWaitingModel url:nil];
 }
 
 - (KSDownloadModel *)getLastDownloadingModel {
-    return [self getModelWithOption:KSDBGetDateOptionLastDownloadingModel url:nil];
+    return [self getModelWithOption:KSDBGetDataOptionLastDownloadingModel url:nil];
 }
 
 - (NSArray<KSDownloadModel *> *)getAllCacheData {
-    return [self getDateWithOption:KSDBGetDateOptionAllCacheData];
+    return [self getDateWithOption:KSDBGetDataOptionAllCacheData];
 }
 
 - (NSArray<KSDownloadModel *> *)getAllDownloadingData {
-    return [self getDateWithOption:KSDBGetDateOptionAllDownloadingData];
+    return [self getDateWithOption:KSDBGetDataOptionAllDownloadingData];
 }
 
 - (NSArray<KSDownloadModel *> *)getAllDownloadedData {
-    return [self getDateWithOption:KSDBGetDateOptionAllDownloadedData];
+    return [self getDateWithOption:KSDBGetDataOptionAllDownloadedData];
 }
 
 - (NSArray<KSDownloadModel *> *)getAllUnDownloadedData {
-    return [self getDateWithOption:KSDBGetDateOptionAllUnDownloadedData];
+    return [self getDateWithOption:KSDBGetDataOptionAllUnDownloadedData];
 }
 
 - (NSArray<KSDownloadModel *> *)getAllWaitingData {
-    return [self getDateWithOption:KSDBGetDateOptionAllWaitingData];
+    return [self getDateWithOption:KSDBGetDataOptionAllWaitingData];
 }
 
-- (KSDownloadModel *)getModelWithOption:(HWDBGetDateOption)option url:(NSString *)url {
+- (KSDownloadModel *)getModelWithOption:(KSDBGetDataOption)option url:(NSString *)url {
     KSDownloadModel *model = nil;
     switch (option) {
-        case KSDBGetDateOptionModelWithUrl: {
+        case KSDBGetDataOptionModelWithUrl: {
             NSArray *list = [KSDownloadModel objectsWhere:@"WHERE URLString = ?" arguments:@[url]];
             model = list.count ? list.firstObject : nil;
         } break;
             
-        case KSDBGetDateOptionWaitingModel: {
+        case KSDBGetDataOptionWaitingModel: {
             NSArray *list = [KSDownloadModel objectsWhere:@"WHERE state = ? order by lastStateTime asc limit 0,1" arguments:@[[NSNumber numberWithInteger:KSDownloadStateWaiting]]];
             model = list.count ? list.firstObject : nil;
         } break;
             
-        case KSDBGetDateOptionLastDownloadingModel: {
+        case KSDBGetDataOptionLastDownloadingModel: {
             NSArray *list = [KSDownloadModel objectsWhere:@"WHERE state = ? order by lastStateTime desc limit 0,1" arguments:@[[NSNumber numberWithInteger:KSDownloadStateDownloading]]];
             model = list.count ? list.firstObject : nil;
         } break;
@@ -97,26 +98,26 @@ typedef NS_ENUM(NSInteger, HWDBGetDateOption) {
     return model;
 }
 
-- (NSArray<KSDownloadModel *> *)getDateWithOption:(HWDBGetDateOption)option {
+- (NSArray<KSDownloadModel *> *)getDateWithOption:(KSDBGetDataOption)option {
     NSArray<KSDownloadModel *> *array = nil;
     switch (option) {
-        case KSDBGetDateOptionAllCacheData:
+        case KSDBGetDataOptionAllCacheData:
             array = [KSDownloadModel objectsWhere:@"WHERE 1 = 1" arguments:nil];
             break;
             
-        case KSDBGetDateOptionAllDownloadingData:
+        case KSDBGetDataOptionAllDownloadingData:
             array = [KSDownloadModel objectsWhere:@"WHERE state = ? order by lastStateTime desc" arguments:@[[NSNumber numberWithInteger:KSDownloadStateDownloading]]];
             break;
             
-        case KSDBGetDateOptionAllDownloadedData:
+        case KSDBGetDataOptionAllDownloadedData:
             array = [KSDownloadModel objectsWhere:@"WHERE state = ?" arguments:@[[NSNumber numberWithInteger:KSDownloadStateFinish]]];
             break;
             
-        case KSDBGetDateOptionAllUnDownloadedData:
+        case KSDBGetDataOptionAllUnDownloadedData:
             array = [KSDownloadModel objectsWhere:@"WHERE state != ?" arguments:@[[NSNumber numberWithInteger:KSDownloadStateFinish]]];
             break;
             
-        case KSDBGetDateOptionAllWaitingData:
+        case KSDBGetDataOptionAllWaitingData:
             array = [KSDownloadModel objectsWhere:@"WHERE state = ?" arguments:@[[NSNumber numberWithInteger:KSDownloadStateWaiting]]];
             break;
             
