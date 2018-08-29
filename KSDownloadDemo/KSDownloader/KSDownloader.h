@@ -69,6 +69,8 @@ extern NSString *const KSNetworkingReachabilityDidChangeNotification;
 
 /**
  下载时, 杀死进程, 更新所有正在下载的任务为等待
+ 
+ 注: 使用GYModelObject库时, 修改状态为waiting, 再次启动时仍为downloading, 使用此库需要注意
  */
 - (void)updateDownloadingTaskState;
 

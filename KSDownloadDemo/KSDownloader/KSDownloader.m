@@ -16,7 +16,7 @@
 
 #import "AppDelegate.h"
 
-NSString *const KSDownloadProgressNotification = @"KSDownloadProgressNotification";
+NSString *const KSDownloadProgressNotification                = @"KSDownloadProgressNotification";
 NSString *const KSNetworkingReachabilityDidChangeNotification = @"KSNetworkingReachabilityDidChangeNotification";
 
 typedef NSMutableDictionary<NSString *, NSURLSessionDownloadTask *> KSDownloadDictionary;
@@ -55,12 +55,12 @@ static NSString *const KSBackgroundSessionConfigrationIdentifier = @"com.kaishu.
     }
 }
 
-- (nonnull instancetype)init {
+- (instancetype)init {
     @throw [NSException exceptionWithName:@"sharedDownloader init error" reason:@"Use the initWithSessionConfiguration: to init." userInfo:nil];
     return [self initWithSessionConfiguration:nil];
 }
 
-- (nonnull instancetype)initWithSessionConfiguration:(nullable NSURLSessionConfiguration *)sessionConfiguration {
+- (instancetype)initWithSessionConfiguration:(NSURLSessionConfiguration *)sessionConfiguration {
     if ((self = [super init])) {
         _currentCount = 0;
         _maxConcurrentDownloadCount = KSDownloaderDefaultMaxConcurrentDownloadCount;
@@ -72,10 +72,9 @@ static NSString *const KSBackgroundSessionConfigrationIdentifier = @"com.kaishu.
 }
 
 - (void)createNewSessionWithConfiguration:(NSURLSessionConfiguration *)sessionConfiguration {
-    if (self.session) {
-        [self.session invalidateAndCancel];
-    }
-
+    if (!sessionConfiguration) return;
+    
+    if (self.session) [self.session invalidateAndCancel];
     NSOperationQueue *queue = [[NSOperationQueue alloc]init];
     queue.maxConcurrentOperationCount = 1;
     self.session = [NSURLSession sessionWithConfiguration:sessionConfiguration
@@ -130,13 +129,13 @@ static NSString *const KSBackgroundSessionConfigrationIdentifier = @"com.kaishu.
 }
 
 - (void)suspendAllDownloadTask {
-    [self pauseDownloadingTaskWithAll:YES];
+    [self pauseAllDownloadTask];
 }
 
 - (void)suspendDownloadTask:(KSDownloadModel *)model {
     if (model == nil) return;
     
-    KSDownloadModel *downloadModel = [[KSDownloadCache sharedCache] getModelWithURLString:model.URLString]; // 获取实时数据
+    KSDownloadModel *downloadModel = [[KSDownloadCache sharedCache] getModelWithURLString:model.URLString]; // 获取实时数据, 进度等信息
     [self cancelTaskWithModel:downloadModel delete:NO];
     downloadModel.state = KSDownloadStatePaused; // update suspend state
     [[KSDownloadCache sharedCache] updateWithModel:downloadModel option:KSCacheUpdateOptionState];
@@ -177,10 +176,9 @@ static NSString *const KSBackgroundSessionConfigrationIdentifier = @"com.kaishu.
     }
 }
 
-- (void)pauseDownloadingTaskWithAll:(BOOL)all {
+- (void)pauseAllDownloadTask {
     NSArray *downloadingData = [[KSDownloadCache sharedCache] getAllUnDownloadedData];
-    NSInteger count = all ? downloadingData.count : downloadingData.count - _maxConcurrentDownloadCount;
-    for (NSInteger i = 0; i < count; i++) {
+    for (NSInteger i = 0, count = downloadingData.count; i < count; i++) {
         KSDownloadModel *model = downloadingData[i];
         [self cancelTaskWithModel:model delete:NO];
         
