@@ -11,6 +11,7 @@
 #import <GYDataContext.h>
 #import <UIKit/UIKit.h>
 
+/** 文件下载状态*/
 typedef NS_ENUM(NSInteger, KSDownloadState) {
     KSDownloadStateDefault = 0,  ///< 默认
     KSDownloadStateDownloading,  ///< 正在下载
@@ -21,12 +22,12 @@ typedef NS_ENUM(NSInteger, KSDownloadState) {
 };
 
 @interface KSDownloadModel : GYModelObject
-@property (nonatomic, copy) NSString *vid;                  ///< 唯一id标识
+@property (nonatomic, copy) NSString *vid;                  ///<  唯一id标识
 @property (nonatomic, copy) NSString *URLString;            ///<  下载地址
 @property (nonatomic, copy) NSString *localPath;            ///<  文件存储路径
 @property (nonatomic, assign) KSDownloadState state;        ///<  下载状态
 @property (nonatomic, strong) NSData *resumeData;           ///<  resumeData
-@property (nonatomic, assign) NSUInteger totalFileSize;     ///<  文件总大小
+@property (nonatomic, assign) NSUInteger totalFileSize;     ///<  文件总大小, 有的服务器不支持断点续传, 此处值可能为-1
 @property (nonatomic, assign) NSUInteger tmpFileSize;       ///<  下载大小
 @property (nonatomic, assign) CGFloat progress;             ///<  下载进度
 @property (nonatomic, copy) NSString *fileName;             ///<  文件名

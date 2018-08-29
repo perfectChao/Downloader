@@ -10,6 +10,8 @@
 
 @implementation KSDownloadModel
 
+#pragma mark - Getter
+
 - (NSString *)localPath {
     if (!_localPath) {
         NSString *str = [NSString stringWithFormat:@"%@_%@", _vid, @"kaishu"];
